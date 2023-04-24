@@ -1090,6 +1090,13 @@ struct RCTInstanceCallback : public InstanceCallback {
                           onComplete:(dispatch_block_t)onComplete
 {
   __weak __typeof(self) weakSelf = self;
+
+  // In case of split bundle, assets are discovered with respect to app/business bundle.
+  // Update the bundle URL to reflect the same. Without this fix, assets will
+  // be referenced with respect to the common/platform bundle and will be blank.
+  self.bundleURL = bundleURL;
+  self.parentBridge.bundleURL = bundleURL;
+
   [RCTJavaScriptLoader loadBundleAtURL:bundleURL
       onProgress:^(RCTLoadingProgress *progressData) {
 #if (RCT_DEV_MENU | RCT_ENABLE_LOADING_VIEW) && __has_include(<React/RCTDevLoadingViewProtocol.h>)
